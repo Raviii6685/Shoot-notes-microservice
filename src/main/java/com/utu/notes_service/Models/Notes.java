@@ -22,6 +22,5 @@ public class Notes {
     private String folderId;
     private String fileName;
     private String fileType ;
-    private Long size ;
     private byte[] content;
 }

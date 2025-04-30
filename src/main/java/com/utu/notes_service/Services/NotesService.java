@@ -28,7 +28,6 @@ public class NotesService extends notesServiceGrpc.notesServiceImplBase {
                 FileDownloadResponse fileDownloadResponse = FileDownloadResponse.newBuilder()
                         .setFileName(note.getFileName())
                         .setFileType(note.getFileType())
-                        .setSize(note.getSize())
                         .setContent(com.google.protobuf.ByteString.copyFrom(note.getContent()))
                         .build();
 
@@ -51,16 +50,16 @@ public class NotesService extends notesServiceGrpc.notesServiceImplBase {
     public void uploadFile(requestFileUpload request, StreamObserver<responseFileUpload> responseObserver) {
         try {
             Notes note = Notes.builder().fileName(request.getFileName())
-                    .size(request.getSize())
                     .fileType(request.getFileType())
                     .content(request.getContent().toByteArray())
                     .folderId(request.getFolderId())
                     .userId(request.getUserId())
                     .build();
-            notesRepository.save(note);
+            ObjectId id =notesRepository.save(note).getId();
             responseFileUpload response = responseFileUpload.newBuilder()
                     .setStatus("Success")
                     .setMessage("File uploaded successfully.")
+                    .setFileId(id.toHexString())
                     .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
